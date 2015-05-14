@@ -14,6 +14,7 @@
     <string name="pref_units_metric_value">metric</string>
     <string name="pref_units_imperial_label">Imperial</string>
     <string name="pref_units_imperial_value">imperial</string>
+    <string name="action_location">Map Location</string>
 
     <string-array name="pref_units_entries">
         <item>@string/pref_units_metric_label</item>
