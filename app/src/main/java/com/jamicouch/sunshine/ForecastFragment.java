@@ -1,8 +1,10 @@
 package com.jamicouch.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.format.Time;
@@ -39,7 +41,6 @@ public class ForecastFragment extends Fragment {
     private static final String TAG = ForecastFragment.class.getSimpleName();
 
     private ArrayAdapter<String> mForecastAdapter;
-    private String mZipCode = "37211";
 
     public ForecastFragment() {
     }
@@ -56,8 +57,6 @@ public class ForecastFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         mForecastAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, new ArrayList<String>());
-
-        getWeatherData();
 
         ListView listView = (ListView)rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForecastAdapter);
@@ -90,8 +89,14 @@ public class ForecastFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        getWeatherData();
+    }
+
     protected void getWeatherData() {
-        new FetchWeatherTask().execute(mZipCode);
+        new FetchWeatherTask().execute(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default)));
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
@@ -196,10 +201,24 @@ public class ForecastFragment extends Fragment {
             return shortenedDateFormat.format(time);
         }
 
+        private double convertTempCtoF(double degC) {
+            return degC * 1.8 + 32;
+        }
+
         /**
          * Prepare the weather high/lows for presentation.
          */
         private String formatHighLows(double high, double low) {
+            String units = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(
+                    getString(R.string.pref_units_key),
+                    getString(R.string.pref_units_default)
+            );
+
+            if (units.equals(getString(R.string.pref_units_imperial_value))) {
+                high = convertTempCtoF(high);
+                low = convertTempCtoF(low);
+            }
+
             // For presentation, assume the user doesn't care about tenths of a degree.
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
