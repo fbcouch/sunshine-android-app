@@ -114,12 +114,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        getWeatherData();
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -150,5 +144,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.d(TAG, "onLoaderReset");
         mForecastAdapter.swapCursor(null);
+    }
+
+    public void onLocationChaged() {
+        getWeatherData();
+        getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 }
