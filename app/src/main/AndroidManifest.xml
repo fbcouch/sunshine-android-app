@@ -35,6 +35,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jamicouch.sunshine.MainActivity" />
         </activity>
+
+        <provider android:authorities="com.jamicouch.sunshine"
+            android:name=".data.WeatherProvider">
+
+        </provider>
     </application>
 
 </manifest>
