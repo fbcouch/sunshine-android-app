@@ -30,7 +30,7 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
 
     private static final String FORECAST_SHARE_HASHTAG = "#SunshineApp";
 
-    private static final int FORECAST_LOADER = 0;
+    private static final int DETAIL_LOADER = 0;
 
     private static final String[] DETAIL_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
@@ -70,15 +70,23 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
     static final int COL_WEATHER_HUMIDITY = 11;
     static final int COL_WEATHER_PRESSURE = 12;
 
+    static final String ARG_FORECAST_URI = "forecastUri";
+
     private String mForecastUri;
     private String mForecastData;
     private ViewHolder mViewHolder;
 
     ShareActionProvider mShareActionProvider;
 
-    public ForecastDetailFragment() {
-        setHasOptionsMenu(true);
+    public static ForecastDetailFragment newInstance(Uri dataUri) {
+        ForecastDetailFragment forecastDetailFragment = new ForecastDetailFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_FORECAST_URI, dataUri.toString());
+        forecastDetailFragment.setArguments(args);
+        return forecastDetailFragment;
     }
+
+    public ForecastDetailFragment() { setHasOptionsMenu(true); }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,6 +96,11 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
         Intent intent = getActivity().getIntent();
         if (intent != null) {
             mForecastUri = intent.getDataString();
+        }
+
+        Bundle arguments = getArguments();
+        if (mForecastUri == null && arguments != null) {
+            mForecastUri = arguments.getString(ARG_FORECAST_URI);
         }
 
         mViewHolder = new ViewHolder(rootView);
@@ -126,11 +139,14 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (mForecastUri == null) {
+            return null;
+        }
         return new CursorLoader(getActivity(), Uri.parse(mForecastUri), DETAIL_COLUMNS, null, null, null);
     }
 
@@ -176,6 +192,17 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    void onLocationChanged( String newLocation ) {
+        // replace the uri, since the location has changed
+        Uri uri = Uri.parse(mForecastUri);
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mForecastUri = updatedUri.toString();
+            getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
+        }
     }
 
     static class ViewHolder {

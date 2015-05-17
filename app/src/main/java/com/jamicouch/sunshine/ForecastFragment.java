@@ -62,6 +62,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     static final int COL_COORD_LAT = 7;
     static final int COL_COORD_LONG = 8;
 
+    static final String BUNDLE_POSITION = "position";
+
+    private ListView mListView;
+    private int mSavedPosition = -1;
+
     public ForecastFragment() {
     }
 
@@ -73,29 +78,39 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
 
-        ListView listView = (ListView)rootView.findViewById(R.id.listview_forecast);
-        listView.setAdapter(mForecastAdapter);
+        mListView = (ListView)rootView.findViewById(R.id.listview_forecast);
+        mListView.setAdapter(mForecastAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        if (savedInstanceState != null) {
+            mSavedPosition = savedInstanceState.getInt(BUNDLE_POSITION, -1);
+        }
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mSavedPosition = position;
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null) {
                     String locationSetting = Utility.getPreferredLocation(getActivity());
-
-                    Intent intent = new Intent(getActivity(), ForecastDetailActivity.class)
-                            .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, cursor.getLong(COL_WEATHER_DATE)));
-                    startActivity(intent);
+                    ((Callback) getActivity()).onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                                    locationSetting, cursor.getLong(COL_WEATHER_DATE))
+                    );
                 }
             }
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(BUNDLE_POSITION, mSavedPosition);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -138,6 +153,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, "onLoadFinished");
         mForecastAdapter.swapCursor(data);
+
+        if (mSavedPosition >= 0) {
+            mListView.smoothScrollToPosition(mSavedPosition);
+        }
     }
 
     @Override
@@ -149,5 +168,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLocationChaged() {
         getWeatherData();
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+    }
+
+    public interface Callback {
+        public void onItemSelected(Uri dateUri);
     }
 }
