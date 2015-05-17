@@ -1,7 +1,6 @@
 package com.jamicouch.sunshine;
 
 import android.content.Intent;
-import android.media.audiofx.BassBoost;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
@@ -38,6 +36,10 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
                 mTwoPane = false;
             }
         }
+
+        ForecastFragment forecastFragment = (ForecastFragment)getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_forecast);
+        forecastFragment.setUseTodayLayout(mTwoPane);
     }
 
     @Override
