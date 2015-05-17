@@ -163,6 +163,9 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
         String pressure = Utility.getFormattedPressure(getActivity(), data.getFloat(COL_WEATHER_PRESSURE));
         mViewHolder.pressureView.setText(pressure);
 
+        int image = Utility.getArtResourceForWeatherCondition(data.getInt(COL_WEATHER_CONDITION_ID));
+        mViewHolder.iconView.setImageResource(image);
+
         mForecastData = dayName + " " + date + " - " + forecast + " - " + high + " / " + low;
 
         if (mShareActionProvider != null) {

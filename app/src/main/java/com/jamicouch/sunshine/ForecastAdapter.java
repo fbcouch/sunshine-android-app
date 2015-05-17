@@ -117,6 +117,14 @@ public class ForecastAdapter extends CursorAdapter {
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
         viewHolder.lowView.setText(Utility.formatTemperature(context, low, isMetric));
 
+        int conditionResId = -1;
+        int weatherConditionId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
+        if (getItemViewType(cursor.getPosition()) == VIEW_TYPE_TODAY) {
+             conditionResId = Utility.getArtResourceForWeatherCondition(weatherConditionId);
+        } else {
+            conditionResId = Utility.getIconResourceForWeatherCondition(weatherConditionId);
+        }
+        viewHolder.iconView.setImageResource(conditionResId);
     }
 
     public static class ViewHolder {
