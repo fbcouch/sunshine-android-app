@@ -181,6 +181,7 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
 
         int image = Utility.getArtResourceForWeatherCondition(data.getInt(COL_WEATHER_CONDITION_ID));
         mViewHolder.iconView.setImageResource(image);
+        mViewHolder.iconView.setContentDescription(forecast);
 
         mForecastData = dayName + " " + date + " - " + forecast + " - " + high + " / " + low;
 

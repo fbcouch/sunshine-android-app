@@ -7,31 +7,38 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="180"
             android:orientation="vertical"
-            android:paddingRight="16dp">
+            android:padding="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/forecast_detail_day_name_textview" />
+                android:id="@+id/forecast_detail_day_name_textview"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="24sp"
+                android:textAppearance="?android:textAppearanceLarge" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/forecast_detail_date_textview" />
+                android:id="@+id/forecast_detail_date_textview"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="20sp"
+                android:textColor="@color/text_grey"
+                android:textAppearance="?android:textAppearanceLarge" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="670"
             android:orientation="vertical">
 
             <LinearLayout
@@ -42,20 +49,26 @@
                 android:paddingBottom="16dp">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/forecast_detail_high_textview" />
+                        android:id="@+id/forecast_detail_high_textview"
+                        android:fontFamily="sans-serif-light"
+                        android:textSize="96sp"
+                        android:textAppearance="?android:textAppearanceLarge" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/forecast_detail_low_textview" />
+                        android:id="@+id/forecast_detail_low_textview"
+                        android:fontFamily="sans-serif-light"
+                        android:textSize="48sp"
+                        android:textColor="@color/text_grey"
+                        android:textAppearance="?android:textAppearanceLarge" />
 
                 </LinearLayout>
 
@@ -74,7 +87,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/forecast_detail_forecast_textview" />
+                        android:id="@+id/forecast_detail_forecast_textview"
+                        android:fontFamily="sans-serif-condensed"
+                        android:textColor="@color/text_grey"
+                        android:textAppearance="?android:textAppearanceLarge" />
 
                 </LinearLayout>
 
@@ -84,19 +100,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/forecast_detail_humidity_textview"
-                android:paddingBottom="16dp" />
+                android:paddingBottom="4dp"
+                android:fontFamily="sans-serif-condensed"
+                android:textAppearance="?android:textAppearanceLarge"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/forecast_detail_wind_textview"
-                android:paddingBottom="16dp" />
+                android:paddingBottom="4dp"
+                android:fontFamily="sans-serif-condensed"
+                android:textAppearance="?android:textAppearanceLarge" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/forecast_detail_pressure_textview"
-                android:paddingBottom="16dp" />
+                android:paddingBottom="4dp"
+                android:fontFamily="sans-serif-condensed"
+                android:textAppearance="?android:textAppearanceLarge" />
 
         </LinearLayout>
 
