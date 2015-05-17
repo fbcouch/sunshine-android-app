@@ -132,7 +132,7 @@ public class ForecastDetailFragment extends Fragment implements LoaderManager.Lo
         double high = data.getDouble(COL_WEATHER_MAX_TEMP);
         double low = data.getDouble(COL_WEATHER_MIN_TEMP);
         boolean isMetric = Utility.isMetric(getActivity());
-        String highAndLow = Utility.formatTemperature(high, isMetric) + "/" + Utility.formatTemperature(low, isMetric);
+        String highAndLow = Utility.formatTemperature(getActivity(), high, isMetric) + "/" + Utility.formatTemperature(getActivity(), low, isMetric);
 
         mForecastData = Utility.formatDate(data.getLong(COL_WEATHER_DATE)) +
                 " - " + data.getString(COL_WEATHER_DESC) +
