@@ -105,7 +105,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
         String currentLocation = Utility.getPreferredLocation(this);
         if (!mLocation.equals(currentLocation)) {
             ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
-            ff.onLocationChaged();
+            ff.onLocationChanged();
 
             ForecastDetailFragment fdf = (ForecastDetailFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
             if (fdf != null) {

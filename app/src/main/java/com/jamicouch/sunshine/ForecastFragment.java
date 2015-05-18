@@ -1,8 +1,12 @@
 package com.jamicouch.sunshine;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -20,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.jamicouch.sunshine.data.WeatherContract;
+import com.jamicouch.sunshine.service.SunshineService;
 
 
 /**
@@ -104,7 +109,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 }
             }
         });
-
+        refreshWeather();
         return rootView;
     }
 
@@ -123,7 +128,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            getWeatherData();
+            refreshWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -136,8 +141,23 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
     }
 
-    protected void getWeatherData() {
-        new FetchWeatherTask(getActivity()).execute(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default)));
+    protected void refreshWeather() {
+        Intent intent = new Intent(getActivity(), SunshineService.class)
+                .putExtra(SunshineService.LOCATION_QUERY_EXTRA,
+                        Utility.getPreferredLocation(getActivity()));
+        getActivity().startService(intent);
+
+        scheduleSunshineService();
+    }
+
+    protected void scheduleSunshineService() {
+        Log.d(TAG, "Scheduling Sunshine Service");
+        Intent intent = new Intent(getActivity(), SunshineService.AlarmReceiver.class)
+                .putExtra(SunshineService.LOCATION_QUERY_EXTRA,
+                        Utility.getPreferredLocation(getActivity()));
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5000, pendingIntent);
     }
 
     @Override
@@ -166,8 +186,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mForecastAdapter.swapCursor(null);
     }
 
-    public void onLocationChaged() {
-        getWeatherData();
+    public void onLocationChanged() {
+        refreshWeather();
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
     }
 
