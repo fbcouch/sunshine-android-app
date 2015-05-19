@@ -57,6 +57,12 @@ public class Utility {
                 .equals(context.getString(R.string.pref_units_metric_value));
     }
 
+    public static boolean getNotificationPreference(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(context.getString(R.string.pref_notification_key),
+                context.getString(R.string.pref_notification_default).equals("true"));
+    }
+
     public static String formatTemperature(Context context, double temperature) {
         return formatTemperature(context, temperature, isMetric(context));
     }

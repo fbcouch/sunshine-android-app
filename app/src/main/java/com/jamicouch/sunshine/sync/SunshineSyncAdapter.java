@@ -163,7 +163,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         String lastNotificationKey = context.getString(R.string.pref_last_notification);
         long lastSync = prefs.getLong(lastNotificationKey, 0);
 
-        if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS || true) {
+        if (!Utility.getNotificationPreference(context)) {
+            Log.d(LOG_TAG, "cancel notification");
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(WEATHER_NOTIFICATION_ID);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putLong(lastNotificationKey, 0);
+            editor.commit();
+        } else if (System.currentTimeMillis() - lastSync >= DAY_IN_MILLIS) {
             Log.d(LOG_TAG, "notifying");
             // Last sync was more than 1 day ago, let's send a notification with the weather.
             String locationQuery = Utility.getPreferredLocation(context);

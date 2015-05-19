@@ -19,6 +19,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
 
     private String mLocation;
     private boolean mTwoPane;
+    private boolean mNotificationPref;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +27,7 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
         Log.d(TAG, "onCreate");
 
         mLocation = Utility.getPreferredLocation(this);
+        mNotificationPref = Utility.getNotificationPreference(this);
 
         if (findViewById(R.id.weather_detail_container) != null) {
             mTwoPane = true;
@@ -117,6 +119,13 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             }
 
             mLocation = currentLocation;
+        }
+
+        Boolean currentNotificationPref = Utility.getNotificationPreference(this);
+        if (currentNotificationPref != mNotificationPref) {
+            SunshineSyncAdapter.syncImmediately(this);
+
+            mNotificationPref = currentNotificationPref;
         }
     }
 
