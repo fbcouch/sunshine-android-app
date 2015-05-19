@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Vector;
 
 /**
@@ -213,6 +214,31 @@ public class FetchWeatherUtility {
             }
 
             Log.d(LOG_TAG, "FetchWeatherTask Complete. " + cVVector.size() + " Inserted");
+
+            Calendar yesterday = Calendar.getInstance();
+            Log.d(LOG_TAG, "Current time: " + Utility.formatDate(yesterday.getTimeInMillis()));
+            yesterday.add(Calendar.DAY_OF_MONTH, -1);
+            Log.d(LOG_TAG, "1 day ago: " + Utility.formatDate(yesterday.getTimeInMillis()));
+
+            Cursor cursor = context.getContentResolver().query(
+                    WeatherContract.WeatherEntry.CONTENT_URI,
+                    null,
+                    WeatherContract.WeatherEntry.COLUMN_DATE + " < ? ",
+                    new String[]{ String.valueOf(yesterday.getTimeInMillis()) },
+                    null
+            );
+
+            int selected = cursor.getCount();
+
+            Log.d(LOG_TAG, selected + " to be removed");
+
+            int removed = context.getContentResolver().delete(
+                    WeatherContract.WeatherEntry.CONTENT_URI,
+                    WeatherContract.WeatherEntry.COLUMN_DATE + " < ? ",
+                    new String[]{ String.valueOf(yesterday.getTimeInMillis()) }
+            );
+
+            Log.d(LOG_TAG, removed + " removed");
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
