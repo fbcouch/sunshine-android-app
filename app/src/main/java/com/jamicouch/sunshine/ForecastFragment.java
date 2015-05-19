@@ -38,6 +38,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private ForecastAdapter mForecastAdapter;
     private boolean mUseTodayLayout;
 
+    private float mCoordLat, mCoordLong;
+
     private static final String[] FORECAST_COLUMNS = {
             // In this case the id needs to be fully qualified with a table name, since
             // the content provider joins the location & weather tables in the background
@@ -125,24 +127,34 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            refreshWeather();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_location) {
+            openPreferredLocationInMap();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     protected void refreshWeather() {
         SunshineSyncAdapter.syncImmediately(getActivity());
+    }
+
+    private void openPreferredLocationInMap() {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri uri = Uri.parse(String.format("geo:%f,%f", mCoordLat, mCoordLong));
+        Log.d(TAG, "Opening map: " + uri.toString());
+        intent.setData(uri);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -159,6 +171,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, "onLoadFinished");
         mForecastAdapter.swapCursor(data);
+
+        if (data.moveToFirst()) {
+            mCoordLat = data.getFloat(COL_COORD_LAT);
+            mCoordLong = data.getFloat(COL_COORD_LONG);
+        }
 
         if (mSavedPosition >= 0) {
             mListView.smoothScrollToPosition(mSavedPosition);
